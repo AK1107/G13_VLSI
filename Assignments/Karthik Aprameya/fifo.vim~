@@ -1,0 +1,50 @@
+module fifo(CLK,D,Q,WEN,REN,RST,FULL,EMPTY,status_counter);
+  parameter DEPTH=16;
+  parameter WIDTH=8;
+  parameter ADDR=4;
+  input CLK,WEN,REN,RST;
+  input reg [WIDTH-1:0] D;
+  output reg [WIDTH-1:0] Q;
+    output reg FULL,EMPTY;
+output reg status_counter;
+  reg[ADDR-1:0] wr_pointer;
+  reg[ADDR-1:0] rd_pointer;
+  reg[WIDTH-1:0] mem[DEPTH-1:0];
+  always @(posedge(CLK))
+    begin
+      if(RST)
+        begin
+          wr_pointer<=0;//initialisation of write pointer
+        rd_pointer<=0;//initialisation of read pointer
+      status_counter<=0;//initialisation of status counter
+        end
+      else begin
+          if(WEN && !FULL)
+            begin
+            wr_pointer<=wr_pointer+1;
+              mem[wr_pointer]<=D;//write operation
+          if(WEN && !REN && status_counter!=DEPTH-1)
+        status_counter<=status_counter+1;     
+            end
+          if(REN && !EMPTY)
+            begin
+            rd_pointer<=rd_pointer+1;
+              Q<=mem[rd_pointer];//read operation
+           if(REN && !WEN && status_counter!=0)
+        status_counter<=status_counter-1;
+            end
+          if(status_counter==DEPTH-1)
+            FULL<=1;
+          else
+            FULL<=0;
+          if(status_counter==0)
+            EMPTY<=1;
+          else
+             EMPTY<=0;
+           
+      end
+    end
+endmodule
+          
+    
+
