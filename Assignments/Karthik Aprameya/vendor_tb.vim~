@@ -1,0 +1,44 @@
+module vendor_fsm_tb;
+  reg Clk,x,rst;
+  wire  y;
+  vendor dut(.Clk(Clk), .x(x), .y(y), .rst(rst));
+   always @(posedge Clk)
+     begin
+  x=2'b00;
+  #10;
+  x=2'b01;
+  #10;
+  x=2'b10;
+  #10;
+  x=2'b10;//1st case 0-1-2-2
+  #10;
+  x=2'b10;
+  #10;
+  x=2'b01;
+  #10;
+  x=2'b10;//2nd case 0-2-1-2
+  #10;
+  x=2'b10;
+  #10;
+  x=2'b10;
+  #10;
+  x=2'b01;//3rd case 2-2-1
+  #10;
+  x=2'b01;
+  #10;
+  x=2'b01;
+  #10;
+  x=2'b10;
+  #10;
+  x=2'b01;
+  #10;
+  x=2'b10;//4th case 2-1-2
+  #10;
+  $dumpfile("dump.vcd");
+    $dumpvars();
+    $finish;
+always begin 
+  #5;Clk=1'b0;#5;Clk=1'b1;
+  end
+     end
+endmodule
